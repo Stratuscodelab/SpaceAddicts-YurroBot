@@ -15,8 +15,6 @@
 # =-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-   2023   -=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=  
 
 
-
-
 import discord
 import sqlite3
 import random
@@ -73,12 +71,17 @@ async def on_message(message):
             
     if message.content.startswith('!yurro help'):
         # Send the help message to the user
-        await message.channel.send('**Commands**\n'
-                                   '!lookup [name]: Looks up a person by name\n'
-                                   '!random: Gets a random person\n'
-                                   '!lookupnft: Will display SA NFT with that number\n'
-                                   '!lookuptraits: Will display all traits for that NFT number\n'
-                                   '!yurro help: Displays the help message\n')
+        await message.channel.send('**Commands:**\n'
+                               '`!lookup [name]`: Look up a Space Addict character by name\n'
+                               '`!random`: Get a random Space Addict character\n'
+                               '`!lookupnft`: Display an Space Addict NFT by its number\n'
+                               '`!lookuptraits`: Display all traits for an Space Addict NFT\n'
+                               '`!lookupnftfull`: Display all traits and image for a Space Addict NFT\n'
+                               '`!yurro help`: Display this help message\n\n'
+                               '**Example Usage:**\n'
+                               '`!lookup Viper`\n'
+                               '`!lookupnft 123`\n'
+                               '`!lookupnftfull 456`')
     
     if message.content.startswith('!lookupnft'):
         # Get the edition number from the command
@@ -99,8 +102,6 @@ async def on_message(message):
                 await message.channel.send(ipfs_link)
             else:
                 await message.channel.send(f"No NFT found for edition {edition}.")
-        else:
-            await message.channel.send(f"Invalid input. Please enter a number between 1 and 5554.")
     
     if message.content.startswith('!lookuptraits'):
     # Get the edition number from the command
@@ -126,7 +127,42 @@ async def on_message(message):
             else:
                 await message.channel.send(f"No attributes found for edition {edition}.")
         else:
+            await message.channel.send(f"Invalid input2. Please enter a number between 1 and 5554.")
+            
+            
+    if message.content.startswith('!lookupnftfull'):
+    # Get the edition number from the command
+        edition = message.content[15:]
+
+        if edition.isdigit() and int(edition) in range(1, 5555):
+            with open(f"sametar.json", "r") as f:
+                data = json.load(f)
+
+            nfts = data
+            nft_data = None
+            for nft in nfts:
+                if nft["edition"] == int(edition):
+                    nft_data = nft
+                    break
+
+            if nft_data:
+                response = f"\n>>Attributes for Edition {edition}<<\n"
+                response += "-" * 35 + "\n"
+                for attribute in nft_data["attributes"]:
+                    response += f"- {attribute['trait_type']}: {attribute['value']}\n"
+                response += f"\n"
+                response += f"{nft_data['image']}"
+                await message.channel.send(response)
+            else:
+                await message.channel.send(f"No NFT found for edition {edition}.")
+        else:
             await message.channel.send(f"Invalid input. Please enter a number between 1 and 5554.")
+
+
+
+
+
+
 
 # Replace YOUR_BOT_TOKEN with your actual bot token
 client.run('BOT_TOKEN_HERE')
