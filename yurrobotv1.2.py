@@ -25,7 +25,7 @@ intents = discord.Intents.all()
 client = discord.Client(command_prefix='!', intents=intents)
 
 # Connect to the SQLite database
-conn = sqlite3.connect('sa24.db')
+conn = sqlite3.connect('sa26.db')
 c = conn.cursor()
 
 @client.event
