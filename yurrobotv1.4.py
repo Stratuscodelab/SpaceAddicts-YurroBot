@@ -20,12 +20,22 @@ import discord
 import sqlite3
 import random
 import json
+import urllib
+import io
+import datetime
+import psutil
+import time
+
+from discord.ext import commands
+
+start_time = datetime.datetime.utcnow()
 
 intents = discord.Intents.all()
 client = discord.Client(command_prefix='!', intents=intents)
 
+
 # Connect to the SQLite database
-conn = sqlite3.connect('sa26.db')
+conn = sqlite3.connect('database_has_been_localised.db')
 c = conn.cursor()
 
 @client.event
@@ -42,18 +52,53 @@ async def on_message(message):
         name = message.content[8:].lower()
 
         # Execute a SELECT statement using the entered name
-        c.execute("SELECT * FROM people WHERE LOWER(name) = ?", (name,))
+        c.execute("SELECT * FROM spaceaddicts WHERE LOWER(name) = ?", (name,))
         result = c.fetchone()
 
         # If a result is found, send it to the user
         if result:
-            await message.channel.send('>>Subject: ' + result[0])
-            await message.channel.send('>>Occupation: ' + result[1])
-            await message.channel.send('>>Profile:\n' + result[2])
+            # Get the image from the URL
+            image_url = result[3]
+            with urllib.request.urlopen(image_url) as url:
+                image_data = url.read()
+            image_file = io.BytesIO(image_data)
+
+            # Create the message with the image
+            message_content = '>>Subject: ' + result[0] + '\n'
+            message_content += '>>Occupation: ' + result[1] + '\n'
+            message_content += '>>Profile:\n' + result[2] + '\n'
+            message = await message.channel.send(message_content, file=discord.File(image_file, 'image.jpg'))
+      
+
+
+      
+    if message.content.startswith('!lookupron'):
+        # Get the name from the command
+        name = message.content[11:].lower()
+
+        # Execute a SELECT statement using the entered name
+        c.execute("SELECT * FROM ront WHERE LOWER(name) = ?", (name,))
+        result = c.fetchone()
+
+        # If a result is found, send it to the user
+        if result:
+            # Get the image from the URL
+            image_url = result[3]
+            with urllib.request.urlopen(image_url) as url:
+                image_data = url.read()
+            image_file = io.BytesIO(image_data)
+
+            # Create the message with the image
+            message_content = '>>Subject: ' + result[0] + '\n'
+            message_content += '>>Occupation: ' + result[1] + '\n'
+            message_content += '>>Profile:\n' + result[2] + '\n'
+            message = await message.channel.send(message_content, file=discord.File(image_file, 'image.jpg'))
+
+
     
     if message.content.startswith('!random'):
         # Execute a SELECT statement to get the number of rows in the people table
-        c.execute("SELECT COUNT(*) FROM people")
+        c.execute("SELECT COUNT(*) FROM spaceaddicts")
         count_result = c.fetchone()
         count = count_result[0]
 
@@ -61,14 +106,21 @@ async def on_message(message):
         random_id = random.randint(1, count)
 
         # Execute a SELECT statement using the generated random number
-        c.execute("SELECT * FROM people LIMIT 1 OFFSET ?", (random_id - 1,))
+        c.execute("SELECT * FROM spaceaddicts LIMIT 1 OFFSET ?", (random_id - 1,))
         result = c.fetchone()
 
-        # If a result is found, send it to the user
         if result:
-            await message.channel.send('>>Subject: ' + result[0])
-            await message.channel.send('>>Occupation: ' + result[1])
-            await message.channel.send('>>Profile:\n' + result[2])
+            # Get the image from the URL
+            image_url = result[3]
+            with urllib.request.urlopen(image_url) as url:
+                image_data = url.read()
+            image_file = io.BytesIO(image_data)
+
+            # Create the message with the image
+            message_content = '>>Subject: ' + result[0] + '\n'
+            message_content += '>>Occupation: ' + result[1] + '\n'
+            message_content += '>>Profile:\n' + result[2] + '\n'
+            message = await message.channel.send(message_content, file=discord.File(image_file, 'image.jpg'))
             
     if message.content.startswith('!yurro help'):
         # Send the help message to the user
@@ -76,8 +128,12 @@ async def on_message(message):
                                '`!lookup [name]`: Look up a Space Addict character by name\n'
                                '`!random`: Get a random Space Addict character\n'
                                '`!lookupnft`: Will show a Space Addict NFT image only\n'
+                               '`!lookupron`: Will show a Ron Tacklebox collection\n'
+                               '`!yurroall`: Will DM you all the characters in Space Addicts\n'
+                               '`!yurroallron`: Will DM you all the characters in Space Addicts\n'
                                '`!lookuptraits`: Display all traits for an Space Addict NFT\n'
                                '`!lookupnftfull`: Display all traits and image for a Space Addict NFT\n'
+                               '`!yurrostats`: Display server information and channel stats\n'
                                '`!yurro help`: Display this help message\n\n'
                                '**Example Usage:**\n'
                                '`!lookup Viper`\n'
@@ -158,6 +214,71 @@ async def on_message(message):
                 await message.channel.send(f"No NFT found for edition {edition}.")
         else:
             await message.channel.send(f"Invalid input. Please enter a number between 1 and 5555.")
+    
+    if message.content.startswith('!yurrostats'):
+        cpu_usage = psutil.cpu_percent()
+        mem_usage = psutil.virtual_memory().percent
+        c.execute("SELECT COUNT(*) FROM spaceaddicts")
+        num_records = c.fetchone()[0]
+        total_users = len(set(client.get_all_members()))
+        total_channels = len(list(client.get_all_channels()))
+        uptime = datetime.datetime.utcnow() - start_time
+
+        # Get network interface statistics
+        net_io_counters = psutil.net_io_counters()
+        bytes_sent = net_io_counters.bytes_sent
+        bytes_recv = net_io_counters.bytes_recv
+        packets_sent = net_io_counters.packets_sent
+        packets_recv = net_io_counters.packets_recv
+
+        # Calculate network speed
+        time.sleep(1)  # Wait for 1 second to get a more accurate measurement
+        net_io_counters = psutil.net_io_counters()
+        bytes_sent_diff = net_io_counters.bytes_sent - bytes_sent
+        bytes_recv_diff = net_io_counters.bytes_recv - bytes_recv
+        net_speed = f"Download Speed: {bytes_recv_diff / 1024:.2f} KB/s, Upload Speed: {bytes_sent_diff / 1024:.2f} KB/s"
+
+        # Calculate days, hours, minutes and seconds
+        uptime_days = uptime.days
+        uptime_hours = uptime.seconds // 3600
+        uptime_minutes = (uptime.seconds // 60) % 60
+        uptime_seconds = uptime.seconds % 60
+
+        # Format uptime as "Days:Hours:Minutes:Seconds"
+        uptime_str = f"{uptime_days} Days, {uptime_hours:02d}:{uptime_minutes:02d}:{uptime_seconds:02d}"
+
+        server_stats = f"**Server Stats**:\nCPU usage: {cpu_usage}%\nMemory usage: {mem_usage}%\nNumber of SA Database Records: {num_records}\n"
+        bot_stats = f"**Bot Stats**:\nTotal users: {total_users}\nTotal channels: {total_channels}\nBot Uptime: {uptime_str}\n{net_speed}"
+
+        await message.channel.send(server_stats + bot_stats)
+        
+    if message.content.startswith('!yurroall'):
+        # Execute a SELECT statement to retrieve all names from the database
+        c.execute("SELECT name FROM spaceaddicts")
+        results = c.fetchall()
+
+        # If results are found, create a comma-separated list of names and send it to the user via DM
+        if results:
+            names = ', '.join([result[0] for result in results])
+            chunks = [names[i:i+4000] for i in range(0, len(names), 4000)] # split the message into chunks of 4000 characters
+            for chunk in chunks:
+                await message.author.send(f'Here are all of the names in the database: {chunk}')
+        else:
+            await message.channel.send('There are no names in the database.')
+            
+    if message.content.startswith('!yurroallron'):
+        # Execute a SELECT statement to retrieve all names from the database
+        c.execute("SELECT name FROM ront")
+        results = c.fetchall()
+
+        # If results are found, create a comma-separated list of names and send it to the user via DM
+        if results:
+            names = ', '.join([result[0] for result in results])
+            chunks = [names[i:i+4000] for i in range(0, len(names), 4000)] # split the message into chunks of 4000 characters
+            for chunk in chunks:
+                await message.author.send(f'Here are all of the names in the database: {chunk}')
+        else:
+            await message.channel.send('There are no names in the database.')
 
 
 
