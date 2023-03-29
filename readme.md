@@ -27,16 +27,26 @@ All this code belongs to the Space Addicts NFT group and can be used freely.
    '`!random`: Get a random Space Addict character\n'
 
    '`!lookupnft`: Will show a Space Addict NFT image only\n'
+
    '`!lookupron`: Will show a Ron Tacklebox collection\n'
+
    '`!yurroall`: Will DM you all the characters in Space Addicts\n'
+
    '`!yurroallron`: Will DM you all the characters in Space Addicts\n'
+
    '`!lookuptraits`: Display all traits for an Space Addict NFT\n'
+
    '`!lookupnftfull`: Display all traits and image for a Space Addict NFT\n'
+
    '`!yurrostats`: Display server information and channel stats\n'
+
    '`!yurro help`: Display this help message\n\n'
+
    '**Example Usage:**\n'
    '`!lookup Viper`\n'
+
    '`!lookupnft 123`\n'
+
    '`!lookupnftfull 456`')
 
 ---
