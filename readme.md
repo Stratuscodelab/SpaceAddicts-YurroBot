@@ -23,7 +23,9 @@ All this code belongs to the Space Addicts NFT group and can be used freely.
 =-=-=-=-=-=-Commands-=-=-=-=-=
 
    '`!lookup [name]`: Look up a Space Addict character by name\n'
+
    '`!random`: Get a random Space Addict character\n'
+
    '`!lookupnft`: Will show a Space Addict NFT image only\n'
    '`!lookupron`: Will show a Ron Tacklebox collection\n'
    '`!yurroall`: Will DM you all the characters in Space Addicts\n'
