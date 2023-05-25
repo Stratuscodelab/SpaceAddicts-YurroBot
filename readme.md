@@ -24,6 +24,18 @@ All this code belongs to the Space Addicts NFT group and can be used freely.
 
    '`!lookup [name]`: Look up a Space Addict character by name or shop item\n'
    
+   '`!comic`: Pre-release comic information\n'
+   
+   '`!video`: Text based video collection from Space Addicts\n'
+   
+   '`!comicpass`: Latest Comic information\n'
+   
+   '`!links`: Display Official Links\n'
+   
+   '`!about`: Display information about Space Addicts\n'
+   
+   '`!shop [name]`: Lookup an item in the online Space Addicts shop\n'
+   
    '`!yurroall`: Will DM you all the characters in Space Addicts, Rons Tacklebox and Shop\n'
 
    '`!random`: Get a random Space Addict character\n'
@@ -39,6 +51,8 @@ All this code belongs to the Space Addicts NFT group and can be used freely.
    '`!yurrostats`: Display server information and channel stats\n'
 
    '`!yurro help`: Display this help message\n\n'
+   
+   '`!help video`: Will show a selection of Help videos\n\n'
 
    '**Example Usage:**\n'
    '`!lookup Viper`\n'
